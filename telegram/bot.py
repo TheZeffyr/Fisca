@@ -7,7 +7,7 @@ from aiogram.client.default import DefaultBotProperties
 
 from handlers import routers
 from config import Config
-from logging.setup import setup_logging
+from logger.setup import setup_logging
 
 
 logger = logging.getLogger(__name__)

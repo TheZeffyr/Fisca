@@ -20,7 +20,7 @@ def setup_logging(debug: bool = False) -> None:
         "formatters": {
             "default": {
                 "format": (
-                    "%(asctime)s | %(levelname)s"
+                    "%(asctime)s | %(levelname)s | "
                     "%(name)s | %(message)s"
                 )
             }
