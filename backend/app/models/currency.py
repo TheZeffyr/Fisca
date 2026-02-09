@@ -38,7 +38,8 @@ class Currency(BaseModel):
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=func.now()
+        default=func.now(),
+        server_default=func.now()
     )
     
     users: Mapped[list["User"]] = relationship(back_populates="currency")

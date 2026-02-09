@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 engine = create_async_engine(
     Config.DB_URL,
-    echo=Config.DEBUG
+    echo=bool(Config.DEBUG)
 )
 logger.info("The database is initialized")
 

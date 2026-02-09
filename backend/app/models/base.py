@@ -1,10 +1,9 @@
-from sqlalchemy.orm import Mapped, mapped_column, declared_attr
+from sqlalchemy.orm import Mapped, mapped_column, declared_attr, DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncAttrs
 
-from app.database import Base
 
 
-class BaseModel(AsyncAttrs, Base):
+class BaseModel(AsyncAttrs, DeclarativeBase):
     """
     The base class for all SQLAlchemy models with async support.
     Attributes:
