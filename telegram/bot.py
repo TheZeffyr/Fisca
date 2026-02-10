@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 
 async def start():
     setup_logging()
-    
     logger.info("Fisca bot starting...")
 
     bot = Bot(
