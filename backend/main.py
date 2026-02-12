@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.database import create_all_tables
-from app.api.v1.users import router
+from app.api.v1 import routers
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -10,4 +10,6 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="Fisca API", lifespan=lifespan)
-app.include_router(router)
+
+for router in routers:
+    app.include_router(router)

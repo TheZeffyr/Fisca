@@ -25,6 +25,7 @@ class BaseRepository(Generic[ModelType]):
         model = self.model(**kwargs)
         self.session.add(model)
         await self.session.flush()
+        await self.session.commit()
         await self.session.refresh(model)
         return model
 

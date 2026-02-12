@@ -1,4 +1,6 @@
-from .users import router
+from .users import router as user_router
+from .currencies import router as currency_router
 
 
-__all__ = ["router"]
+routers = [user_router, currency_router]
+__all__ = ["routers"]
