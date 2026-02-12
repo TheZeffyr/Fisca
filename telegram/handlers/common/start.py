@@ -7,7 +7,6 @@ from aiogram.filters.command import CommandStart
 from strings.messages import START_TEXT
 from keyboards.reply import get_main_kb
 
-
 router = Router(name="start_router")
 logger = logging.getLogger(__name__)
 

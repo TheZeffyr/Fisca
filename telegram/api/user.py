@@ -32,4 +32,13 @@ async def register_user(tg_id: int, currency_id: int):
                 return await response.json()
             text = await response.text()
             raise Exception(f"Error {response.status}:{text}")
+
+async def get_user_by_tg_id(tg_id: int):
+    url = f"http://127.0.0.1:8000/users/tg/{tg_id}"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status in (200, 201):
+                return await response.json()
+            text = await response.text()
+            raise Exception(f"Error {response.status}:{text}")
         
