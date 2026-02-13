@@ -10,6 +10,8 @@ from config import Config
 from logger.setup import setup_logging
 from middlewares import RegistrationMiddleware
 
+
+
 logger = logging.getLogger(__name__)
 
 
