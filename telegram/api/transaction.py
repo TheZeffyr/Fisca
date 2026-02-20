@@ -8,10 +8,10 @@ logger = logging.getLogger(__name__)
 async def create_transaction(
     user_tg_id: int,
     category_id: int,
-    saving_id: int | None,
     amount: int,
     date_time: datetime,
-    transaction_type: str
+    transaction_type: str,
+    saving_id: int | None = None
 ):
     url = f"http://127.0.0.1:8000/transactions"
     payload = {

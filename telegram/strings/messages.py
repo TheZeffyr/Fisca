@@ -89,3 +89,9 @@ POST_REGISTRATION_TEXT = """🎉 *Ура\\! Вы успешно зарегист
 _Fisca — ваш личный финансовый помощник в Telegram\\!_
 _С нами легко управлять деньгами\\!_ 🚀
 """
+SELECT_TRANSACTION_TYPE = "Выберите тип транзакции:"
+SELECT_CATEGORY = "Выберите категорию:"
+INPUT_AMOUNT = "Введите сумму:"
+SELECT_DATETIME = "Выберите дату:"
+INPUT_DATETIME = "Введите дату и время в формате ДД\\.ММ\\.ГГГГ"
+TRANSACTION_CREATED = "Транзакция успешно создана\\!"
