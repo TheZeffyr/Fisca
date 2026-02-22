@@ -11,8 +11,8 @@ class UserService:
     """
     Business logic service for User operations.
     """
-    def __init__(self, repository: UserRepository):
-        self.repository = repository
+    def __init__(self, session):
+        self.repository = UserRepository(session)
     
     async def register_user(
           self,
@@ -29,9 +29,9 @@ class UserService:
         Args:
             tg_id: Telegram user ID. Must be unique across the system.
             currency_id: ID of the default currency for the user.
-                         Typically selected during onboarding.
+                        Typically selected during onboarding.
             created_at: Optional timestamp for user creation.
-                       If None, the repository will use current time.
+                        If None, the repository will use current time.
         
         Returns:
             User: The newly registered user entity with database-generated ID.
@@ -55,3 +55,5 @@ class UserService:
             id={user.id}, tg_id={user.tg_id}, currency_id={user.currency_id}"
         )
         return user
+    async def get_by_tg_id(self, tg_id: int) -> User | None:
+        return await self.repository.get_by_tg_id(tg_id)

@@ -19,8 +19,7 @@ class Saving(BaseModel):
         id (int): Unique goal identifier (PK)
         user_id (int): ID of the goal owner (FK → User.id )
         name (str): The name of the goal (for example, "For vacation", "For a car")
-        final_amount (int): Target amount in pennies/cents
-        description (str, nullable): Detailed description of the goal
+        final_amount (int): Target amount
         deadline (datetime, nullable): The planned goal completion date
         created_at (datetime): Goal creation date
     """

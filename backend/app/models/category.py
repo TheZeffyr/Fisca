@@ -2,7 +2,8 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, DateTime, func, ForeignKey
+from sqlalchemy import String, DateTime, func, ForeignKey, Enum
+from app.enums import TransactionType
 
 from .base import BaseModel
 if TYPE_CHECKING:
@@ -27,7 +28,12 @@ class Category(BaseModel):
         nullable=True
     )
     name: Mapped[str] = mapped_column(String(100))
+    transaction_type: Mapped[TransactionType] = mapped_column(
+        Enum(TransactionType)
+    )
+    is_global: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+
 
     user: Mapped["User"] = relationship(back_populates="categories")
     transactions: Mapped[list["Transaction"]] = relationship(

@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.schemas.user import UserCreate, UserResponse
 from app.database import get_session
-from app.repositories import UserRepository
 from app.services import UserService
 
 
@@ -14,8 +13,7 @@ async def register_user(
     data: UserCreate,
     session: AsyncSession = Depends(get_session)
 ):
-    repo = UserRepository(session)
-    service = UserService(repo)
+    service = UserService(session)
     user = await service.register_user(
         tg_id=data.tg_id,
         currency_id=data.currency_id
@@ -27,7 +25,7 @@ async def get_user_by_tg_id(
     user_tg_id: int,
     session: AsyncSession = Depends(get_session)
 ):
-    repo = UserRepository(session)
+    repo = UserService(session)
     user = await repo.get_by_tg_id(user_tg_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
