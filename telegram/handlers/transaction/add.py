@@ -7,10 +7,11 @@ from aiogram.fsm.context import FSMContext
 
 from strings.messages import SELECT_TRANSACTION_TYPE, INPUT_AMOUNT, SELECT_CATEGORY, SELECT_DATETIME, INPUT_DATETIME, TRANSACTION_CREATED
 from strings.errors import INVALID_DATE_FORMAT
-from keyboards.inline import get_transaction_type_kb, get_categories_pg_kb, CategoryData, get_dates_kb
+from keyboards.inline import get_transaction_type_kb, get_categories_pg_kb, CategoryData, get_dates_kb, get_savings_pg_kb, SavingData
 from states import CreateTransactionState
 from api.category import get_categories_by_filters
 from api.transaction import create_transaction
+from api.saving import get_savings_by_user_tg_id
 
 router = Router(name="add_transaction_router")
 
@@ -26,7 +27,7 @@ async def add_transaction_interactive(message: Message, state: FSMContext):
 
 @router.callback_query(
     CreateTransactionState.transaction_type,
-    F.data.in_({"income", "expense"})
+    F.data.in_({"income", "expense", "deposit", "withdrawal"})
 )
 async def process_transaction_type(
     callback: CallbackQuery,
@@ -37,11 +38,29 @@ async def process_transaction_type(
     
     transaction_type = callback.data
     await state.update_data(transaction_type=transaction_type)
+    if transaction_type in ["deposit", "withdrawal"]:
+        await state.set_state(CreateTransactionState.saving_id)
+        await callback.answer()
+        savings = await get_savings_by_user_tg_id(callback.from_user.id)
+        await callback.message.answer(
+            text="Выберите копилку:",
+            reply_markup=get_savings_pg_kb(savings)
+        )
+    else:
+        await state.set_state(CreateTransactionState.amount)
+        await callback.answer()
+        await callback.message.answer(
+            text=INPUT_AMOUNT
+        )
+
+@router.callback_query(SavingData.filter(), CreateTransactionState.saving_id)
+async def process_saving(callback: CallbackQuery, callback_data: SavingData, state: FSMContext):
+    if not callback.message:
+        return
+    saving_id = callback_data.id
+    await state.update_data(saving_id=saving_id)
     await state.set_state(CreateTransactionState.amount)
-    await callback.answer()
-    await callback.message.answer(
-        text=INPUT_AMOUNT
-    )
+    await callback.message.answer(INPUT_AMOUNT)
 
 @router.message(CreateTransactionState.amount)
 async def process_amount(
@@ -52,7 +71,6 @@ async def process_amount(
         return
     amount = abs(float(message.text.replace(',', '.')))
     await state.update_data(amount=amount)
-    await state.set_state(CreateTransactionState.category_id)
     user_tg_id = message.from_user.id
     transaction_type = await state.get_value("transaction_type")
     if not transaction_type:
@@ -61,10 +79,18 @@ async def process_amount(
         user_tg_id=user_tg_id,
         transaction_type=transaction_type
     )
-    await message.answer(
-        text=SELECT_CATEGORY,
-        reply_markup=get_categories_pg_kb(categories)
-    )
+    if transaction_type in ["deposit", "withdrawal"]:
+        await state.set_state(CreateTransactionState.date_time)
+        await message.answer(
+            text=SELECT_DATETIME,
+            reply_markup=get_dates_kb()
+        )
+    else:
+        await state.set_state(CreateTransactionState.category_id)
+        await message.answer(
+            text=SELECT_CATEGORY,
+            reply_markup=get_categories_pg_kb(categories)
+        )
 
 @router.callback_query(
     CategoryData.filter(),
@@ -150,7 +176,8 @@ async def complete_create_transaction(
             transaction_type=data['transaction_type'],
             category_id=data['category_id'],
             amount=data['amount'],
-            date_time=data['date_time']
+            date_time=data['date_time'],
+            saving_id=data["saving_id"]
         )
     except Exception as e:
         return
