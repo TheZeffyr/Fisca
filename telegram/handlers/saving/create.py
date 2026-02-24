@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from api.saving import create_saving
 from states import CreateSavingState
 
-router = Router(name="saving_router")
+router = Router(name="saving_add_router")
 logger = logging.getLogger(__name__)
 
 
