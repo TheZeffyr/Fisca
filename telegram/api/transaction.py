@@ -34,4 +34,21 @@ async def create_transaction(
             text = await response.text()
             raise Exception(f"Error {response.status}:{text}")
 
-        
+async def get_main_balance(
+    user_tg_id: int
+):
+    url = f"http://127.0.0.1:8000/transactions/balance/main"
+    params  = {
+        "user_tg_id": user_tg_id
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, params=params) as response:
+            if response.status == 200:
+                return await response.json()
+            
+            text = await response.text()
+            
+            if response.status == 404:
+                return []
+            else:
+                raise Exception(f"Error {response.status}:{text}")        
