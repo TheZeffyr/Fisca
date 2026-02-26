@@ -7,7 +7,7 @@ from app.repositories import SavingRepository, UserRepository
 
 class SavingService:
     """"""
-    async def __init__(self, session):
+    def __init__(self, session):
         self.saving_repository = SavingRepository(session)
         self.user_repository = UserRepository(session)
     
@@ -30,3 +30,9 @@ class SavingService:
             deadline=deadline,
             created_at=created_at
         )
+
+    async def get_by_user_tg_id(self, user_tg_id: int) -> list[Saving]:
+        user = await self.user_repository.get_by_tg_id(user_tg_id)
+        if not user:
+            raise ValueError(f"User not found: {user_tg_id}")
+        return await self.saving_repository.get_by_user_id(user.id)

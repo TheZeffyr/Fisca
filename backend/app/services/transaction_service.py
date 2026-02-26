@@ -32,3 +32,8 @@ class TransactionService:
                 transaction_type=transaction_type,
                 saving_id=saving_id
             )
+    async def get_balance_for_user(self, user_tg_id: int) -> float:
+        user = await self.user_repository.get_by_tg_id(user_tg_id)
+        if not user:
+            raise ValueError(f"User not found: {user_tg_id}")
+        return await self.repository.get_balance_for_user(user.id)

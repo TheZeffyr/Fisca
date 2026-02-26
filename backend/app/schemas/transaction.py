@@ -22,3 +22,8 @@ class TransactionResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class BalanceResponse(BaseModel):
+    user_tg_id: int
+    balance: float
+    balance_type: str

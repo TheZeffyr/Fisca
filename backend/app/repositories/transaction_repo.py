@@ -1,9 +1,11 @@
 from datetime import datetime
 
+from sqlalchemy import func, case, select
 
 from app.models import Transaction
 from .base_repo import BaseRepository
 from app.enums import TransactionType
+
 
 
 class TransactionRepository(BaseRepository):
@@ -27,3 +29,13 @@ class TransactionRepository(BaseRepository):
             transaction_type=transaction_type,
             saving_id=saving_id
         )
+    async def get_balance_for_user(self, user_id: int) -> float:
+        query = select(
+            func.sum(
+            case(
+                (Transaction.transaction_type == TransactionType.INCOME, Transaction.amount),
+                (Transaction.transaction_type == TransactionType.EXPENSE, -Transaction.amount)
+            , else_=0).label('total_balance')
+        )).where(Transaction.user_id==user_id)
+        result = await self.session.execute(query)
+        return result.scalar() or 0.0

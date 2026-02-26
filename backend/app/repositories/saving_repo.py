@@ -1,12 +1,15 @@
 from datetime import datetime
 
+from sqlalchemy import select
+
 from app.models import Saving
 from .base_repo import BaseRepository
 
 
+
 class SavingRepository(BaseRepository):
     """"""
-    async def __init__(self, session):
+    def __init__(self, session):
         super().__init__(session, Saving)
     
     async def create(
@@ -25,3 +28,8 @@ class SavingRepository(BaseRepository):
             deadline=deadline,
             created_at=created_at
         )
+    
+    async def get_by_user_id(self, user_id: int) -> list[Saving]:
+        query = select(self.model).where(Saving.user_id == user_id)
+        result = await self.session.execute(query)
+        return list(result.scalars())
