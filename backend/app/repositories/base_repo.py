@@ -29,7 +29,7 @@ class BaseRepository(Generic[ModelType]):
         await self.session.refresh(model)
         return model
 
-    async def get(self, id: int) -> ModelType | None:
+    async def get_by_id(self, id: int) -> ModelType | None:
         query = select(self.model).where(self.model.id == id)
         result = await self.session.execute(query)
         return result.scalar_one_or_none()

@@ -21,4 +21,6 @@ class CategoryService:
         if user:
             return await self.repository.get_by_transaction_type_and_user(user.id,transaction_type)
         return []
+    async def get_by_id(self, id: int) -> Category | None:
+        return await self.repository.get_by_id(id=id)
     

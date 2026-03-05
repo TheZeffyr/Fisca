@@ -37,3 +37,11 @@ class TransactionService:
         if not user:
             raise ValueError(f"User not found: {user_tg_id}")
         return await self.repository.get_balance_for_user(user.id)
+    async def get_saving_balance_by_saving_id(self, saving_id: int) -> float:
+         return await self.repository.get_balance_for_saving(saving_id=saving_id)
+
+    async def get_last_month_by_user(self, user_tg_id: int)->list[Transaction]:
+        user = await self.user_repository.get_by_tg_id(user_tg_id)
+        if not user:
+            raise ValueError(f"User not found: {user_tg_id}")
+        return await self.repository.get_last_month_by_user(user.id) 

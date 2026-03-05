@@ -36,3 +36,21 @@ async def get_main_balance(
         balance=balance,
         balance_type="main"
     )
+
+@router.get("/{saving_id}/balance")
+async def get_balance_by_id(
+    saving_id: int,
+    session: AsyncSession = Depends(get_session)   
+):
+    service = TransactionService(session)
+    balance = await service.get_saving_balance_by_saving_id(saving_id)
+    return balance
+
+@router.get("/current-month/{user_tg_id}", response_model=list[TransactionResponse])
+async def get_current_month_transactions(
+    user_tg_id: int,
+    session: AsyncSession = Depends(get_session)
+):
+    service = TransactionService(session)
+    transactions = await service.get_last_month_by_user(user_tg_id)
+    return transactions

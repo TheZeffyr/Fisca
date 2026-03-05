@@ -32,7 +32,6 @@ class Category(BaseModel):
         Enum(TransactionType)
     )
     is_global: Mapped[bool] = mapped_column(default=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
 
 
     user: Mapped["User"] = relationship(back_populates="categories")
