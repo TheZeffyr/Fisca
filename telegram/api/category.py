@@ -24,3 +24,26 @@ async def get_categories_by_filters(
                 return []  # Нет категорий
             else:
                 raise Exception(f"Error {response.status}:{text}")
+
+async def get_by_id(
+    id: int
+):
+    if id <= 0:
+        raise ValueError("ID must be positive integer")
+    
+    url = f"http://127.0.0.1:8000/categories/{id}"
+
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    return await response.json()
+                elif response.status == 404:
+                    text = await response.text()
+                    raise ValueError(f"Category with id {id} not found: {text}")
+                else:
+                    text = await response.text()
+                    raise ValueError(f"Unexpected response {response.status}: {text}")
+                    
+        except aiohttp.ClientError as e:
+            raise aiohttp.ClientError(f"Connection error while fetching category {id}: {e}")

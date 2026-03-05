@@ -36,7 +36,7 @@ async def create_transaction(
 
 async def get_main_balance(
     user_tg_id: int
-):
+) -> dict:
     url = f"http://127.0.0.1:8000/transactions/balance/main"
     params  = {
         "user_tg_id": user_tg_id
@@ -49,6 +49,39 @@ async def get_main_balance(
             text = await response.text()
             
             if response.status == 404:
-                return []
+                return {}
             else:
-                raise Exception(f"Error {response.status}:{text}")        
+                raise Exception(f"Error {response.status}:{text}")
+
+async def get_saving_balance(
+    saving_id: int
+):
+    url = f"http://127.0.0.1:8000/transactions/{saving_id}/balance"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                return await response.json()
+            
+            text = await response.text()
+            
+            if response.status == 404:
+                return 0.0
+            else:
+                raise Exception(f"Error {response.status}:{text}")
+
+
+async def get_current_month_transactions(
+    user_tg_id: int
+) -> dict:
+    url = f"http://127.0.0.1:8000/transactions/current-month/{user_tg_id}"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                return await response.json()
+            
+            text = await response.text()
+            
+            if response.status == 404:
+                return {}
+            else:
+                raise Exception(f"Error {response.status}:{text}")

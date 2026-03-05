@@ -1,4 +1,4 @@
-from .common import start_router, help_router, fisca_router
+from .common import start_router, help_router, fisca_router, dashboard_router
 from .currency import router as currency_router
 from .pagination import router as pagination_router
 from .transaction.add import router as transaction_add_router
@@ -13,7 +13,8 @@ routers = [
     pagination_router,
     transaction_add_router,
     saving_create_router,
-    saving_view_router
+    saving_view_router,
+    dashboard_router
 ]
 
 __all__ = ["routers"]

@@ -20,9 +20,9 @@ async def start():
     logger.info("Fisca bot starting...")
     bot = Bot(
         Config.BOT_TOKEN,
-        default=DefaultBotProperties(
-            parse_mode=ParseMode.MARKDOWN_V2
-            )
+         default=DefaultBotProperties(
+             parse_mode=ParseMode.HTML
+             )
         )
 
     dp = Dispatcher()
