@@ -1,12 +1,13 @@
-from datetime import datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import CHAR, String, DateTime, func
+from sqlalchemy import CHAR, String
 
 from .base import BaseModel
+
 if TYPE_CHECKING:
     from .user import User
+
 
 class Currency(BaseModel):
     """
@@ -14,12 +15,10 @@ class Currency(BaseModel):
 
     Stores information about supported currencies using the ISO 4217 standard.
 
-    Fields:
-        id (int): Unique Currency Identifier (PK)
+    Attributes:
         currency_code (str, 3 chars): Three-letter currency code (ISO 4217)
         name (str): Full name of the currency
         symbol (str, 1 char): Currency symbol (₽, $, €, etc.)
-        created_at (datetime): Date the currency was added
     """
     currency_code: Mapped[str] = mapped_column(
         CHAR(3),
@@ -33,13 +32,8 @@ class Currency(BaseModel):
     )
     symbol: Mapped[str] = mapped_column(
         CHAR(1),
-        default="",
+        nullable=True,
         doc="Currency symbol. For currencies without a symbol, an empty string."
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=func.now(),
-        server_default=func.now()
     )
     
     users: Mapped[list["User"]] = relationship(back_populates="currency")

@@ -11,10 +11,11 @@ if TYPE_CHECKING:
     from .category import Category
     from .transaction import Transaction
 
+
 class User(BaseModel):
     """User model representing a Telegram bot user.
 
-    Args:
+    Attributes:
         tg_id (int): Telegram User ID (unique)
         currency_id (int): User’s currency id
     """
