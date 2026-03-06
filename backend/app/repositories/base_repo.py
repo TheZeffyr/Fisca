@@ -127,5 +127,3 @@ class BaseRepository(Generic[ModelType]):
         ))
         result = await self.session.execute(query)
         return result.scalar_one()
-    
-
