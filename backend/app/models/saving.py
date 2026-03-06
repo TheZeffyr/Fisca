@@ -26,8 +26,11 @@ class Saving(BaseModel):
     """
 
     __table_args__ = (
-        CheckConstraint('target_amount > 0', name='check_target_amount_positive'),
-        CheckConstraint('current_amount >= 0', name='check_current_amount_non_negative'),
+        CheckConstraint('deadline >= 0', name='check_current_amount_non_negative'),
+        CheckConstraint(
+            "LENGTH(TRIM(name)) > 0",
+            name='check_saving_name_not_empty'
+        )
     )
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id"),

@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, ForeignKey, Enum
+from sqlalchemy import String, ForeignKey, Enum, UniqueConstraint, CheckConstraint
 from app.enums import TransactionType
 
 from .base import BaseModel
@@ -22,6 +22,16 @@ class Category(BaseModel):
         name (str): Category name
         transaction_type (CategoryType): Operation type used category
     """
+    __table_args__ = (
+        UniqueConstraint(
+            'user_id', 'name', 'transaction_type',
+            name='uq_user_category_name_type'
+        ),
+        CheckConstraint(
+            "LENGTH(TRIM(name)) > 0",
+            name='check_category_name_not_empty'
+        ),
+    )
     user_id: Mapped[int | None] = mapped_column(
         ForeignKey("users.id"),
         nullable=True,
@@ -29,6 +39,7 @@ class Category(BaseModel):
     )
     name: Mapped[str] = mapped_column(
         String(100),
+        unique=True,
         doc="Category name"
     )
     transaction_type: Mapped[TransactionType] = mapped_column(
