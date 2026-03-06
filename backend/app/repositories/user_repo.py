@@ -26,8 +26,7 @@ class UserRepository(BaseRepository):
         Args:
             tg_id: Telegram user ID (unique)
             currency_id: ID of the user's default currency
-            created_at: Optional creation timestamp. 
-                       If None, database will set current timestamp.
+            created_at: Optional creation timestamp. If None, database will set current timestamp.
         Returns:
             User: Created User instance
         """
