@@ -1,10 +1,10 @@
-from datetime import datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import func, BigInteger, DateTime, ForeignKey
+from sqlalchemy import BigInteger, ForeignKey
 
 from .base import BaseModel
+
 if TYPE_CHECKING:
     from.currency import Currency
     from .saving import Saving
@@ -12,22 +12,26 @@ if TYPE_CHECKING:
     from .transaction import Transaction
 
 class User(BaseModel):
-    """
-    The user model.
+    """User model representing a Telegram bot user.
 
-    Represents the bot user, stores basic information and settings.
-
-    Fields:
-        id (int): Unique User Identifier (PK)
+    Args:
         tg_id (int): Telegram User ID (unique)
-        currency_id (int, nullable): Default currency ID (FK → Currency.id)
-        created_at (datetime): Date and time of registration (automatically)
+        currency_id (int): User’s currency id
     """
-    tg_id: Mapped[int] = mapped_column(BigInteger, unique=True)
-    currency_id: Mapped[int] = mapped_column(ForeignKey("currency.id"))
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+    tg_id: Mapped[int] = mapped_column(
+        BigInteger,
+        unique=True,
+        index=True,
+        doc="Telegram user ID from Telegram API"
+    )
+    currency_id: Mapped[int] = mapped_column(
+        ForeignKey("currencies.id", ondelete="RESTRICT"),
+        doc="IUser’s currency id"
+    )
 
     currency: Mapped["Currency"] = relationship(back_populates="users")
-    categories: Mapped[list["Category"]] = relationship(back_populates="user")
-    savings: Mapped[list["Saving"]] = relationship(back_populates="user")
-    transactions: Mapped[list["Transaction"]] = relationship(back_populates="user")
+    categories: Mapped[list["Category"]] = relationship(back_populates="users")
+    savings: Mapped[list["Saving"]] = relationship(back_populates="users")
+    transactions: Mapped[list["Transaction"]] = relationship(
+        back_populates="users"
+    )
