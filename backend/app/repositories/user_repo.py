@@ -9,6 +9,9 @@ class UserRepository(BaseRepository[User]):
     Repository for User model operations.
     
     Inherits common CRUD operations from BaseRepository.
+
+    Attributes:
+        session: SQLAlchemy async session
     """
     def __init__(self, session):
         super().__init__(session, User)
