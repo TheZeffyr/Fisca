@@ -1,8 +1,8 @@
+from datetime import date
 from typing import TYPE_CHECKING
-from datetime import datetime
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, String, CheckConstraint
+from sqlalchemy import ForeignKey, String, CheckConstraint, Date
 
 from .base import BaseModel
 
@@ -43,7 +43,8 @@ class Saving(BaseModel):
     final_amount: Mapped[int] = mapped_column(
         doc="Target amount to save"
     )
-    deadline: Mapped[datetime | None] = mapped_column(
+    deadline: Mapped[date | None] = mapped_column(
+        Date,
         nullable=True,
         doc="Optional target date to achieve the goal"
     )
