@@ -70,7 +70,7 @@ class CategoryRepository(BaseRepository[Category]):
         """
         return await self._get_many(user_id=user_id)
     
-    async def get_aviable_for_user(self, user_id: int) -> list[Category]:
+    async def get_available_for_user(self, user_id: int) -> list[Category]:
         """Get all categories available to a specific user.
         
         This includes:
@@ -106,7 +106,7 @@ class CategoryRepository(BaseRepository[Category]):
             transaction_type=transaction_type
         )
     
-    async def get_aviable_for_user_and_type(
+    async def get_available_for_user_and_type(
             self,
             user_id: int,
             transaction_type: TransactionType
