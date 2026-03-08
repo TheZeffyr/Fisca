@@ -87,9 +87,10 @@ class CategoryRepository(BaseRepository[Category]):
             list[Category]: Combined list of personal and global categories,
                           sorted by transaction type and name
         """
-        personal = await self._get_many(user_id=user_id)
-        global_cats = await self._get_many(user_id=None)
-        return personal + global_cats    
+        personal_categories = await self._get_many(user_id=user_id)
+        global_categories = await self._get_many(user_id=None)
+        return personal_categories + global_categories    
+    
     async def get_by_user_and_type(self, user_id: int, transaction_type: TransactionType) -> list[Category]:
         """Get personal categories for a user filtered by transaction type.
         
@@ -104,6 +105,31 @@ class CategoryRepository(BaseRepository[Category]):
             user_id=user_id,
             transaction_type=transaction_type
         )
+    
+    async def get_aviable_for_user_and_type(
+            self,
+            user_id: int,
+            transaction_type: TransactionType
+        ) -> list[Category]:
+        """Get all categories available to a user for a specific transaction type.
+    
+        Args:
+            user_id: ID of the user
+            transaction_type: Type of transaction (income or expense)
+
+        Returns:
+            list[Category]: Combined list of personal and global categories of the specified type
+        """
+        personal_categories = await self.get_by_user_and_type(
+            user_id=user_id,
+            transaction_type=transaction_type
+        )
+        global_categories = await self._get_many(
+            user_id=None,
+            transaction_type=transaction_type
+        )
+        return personal_categories+global_categories
+
     async def update(
             self,
             category_id: int,
