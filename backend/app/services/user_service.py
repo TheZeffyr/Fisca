@@ -79,12 +79,7 @@ class UserService:
             f"User registered successfully: \
             id={user.id}, tg_id={user.tg_id}, currency_id={user.currency_id}"
         )
-        return UserDTO(
-            id=user.id,
-            tg_id=user.tg_id,
-            currency_id=user.currency_id,
-            created_at=user.created_at
-        )
+        return UserDTO.model_validate(user)
     
     async def get_by_tg_id(self, tg_id: int) -> UserDTO:
         """Get user by Telegram ID.
@@ -110,12 +105,7 @@ class UserService:
         if user is None:
             raise UserNotFoundError()
         
-        return UserDTO(
-            id=user.id,
-            tg_id=user.tg_id,
-            currency_id=user.currency_id,
-            created_at=user.created_at
-        )
+        return UserDTO.model_validate(user)
     
     async def update_currency(self, tg_id: int, currency_id: int) -> UserDTO:
         """Update user's preferred currency.
@@ -161,12 +151,7 @@ class UserService:
             raise UserNotFoundError()
         await self.session.commit()
 
-        return UserDTO(
-            id=user.id,
-            tg_id=user.tg_id,
-            currency_id=user.currency_id,
-            created_at=user.created_at
-        )
+        return UserDTO.model_validate(user)
     
     async def delete(self, tg_id: int) -> None:
         """Delete a user account permanently.

@@ -22,7 +22,7 @@ class CurrencyRepository(BaseRepository[Currency]):
         name: str,
         symbol: str,
         created_at: datetime | None = None
-    ) -> Currency | None:
+    ) -> Currency:
         """
         Create a new currency.
 
@@ -59,7 +59,7 @@ class CurrencyRepository(BaseRepository[Currency]):
             is_active: New active status (if changing)
 
         Returns:
-            Currency | None: Updated currency if found, None otherwise
+            Currency|None: Updated currency if found, None otherwise
         """
         currency = await self.get_by_id(currency_id)
         if not currency:
@@ -87,7 +87,7 @@ class CurrencyRepository(BaseRepository[Currency]):
             currency_code: Three-letter currency code (e.g., 'USD', 'EUR', 'RUB')
             
         Returns:
-            Currency | None: Currency if found, None otherwise
+            Currency|None: Currency if found, None otherwise
         
         """
         return await self._get_by(currency_code=currency_code)

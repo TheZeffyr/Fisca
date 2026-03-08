@@ -188,7 +188,7 @@ class BaseRepository(Generic[ModelType]):
             id: Primary key value
             
         Returns:
-            Optional[ModelType]: Record if found, None otherwise
+            ModelType|None: Record if found, None otherwise
         """
         query = select(self.model).where(self.model.id == id)
         result = await self.session.execute(query)
