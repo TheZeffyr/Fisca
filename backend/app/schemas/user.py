@@ -1,13 +1,9 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
-class UserCreate(BaseModel):
-    tg_id: int
-    currency_id: int
-
-class UserResponse(BaseModel):
+class UserDTO(BaseModel):
     id: int
     tg_id: int
     currency_id: int
-
-    class Config:
-        from_attributes = True
+    created_at: datetime
