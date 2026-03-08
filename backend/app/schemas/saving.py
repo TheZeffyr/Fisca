@@ -1,17 +1,11 @@
-from datetime import datetime
-from pydantic import BaseModel
+from datetime import datetime, date
+from pydantic import BaseModel, Field
 
 
-class SavingCreate(BaseModel):
-    user_tg_id: int
-    name: str
-    final_amount: int
-    deadline: datetime
-
-class SavingResponse(BaseModel):
+class SavingDTO(BaseModel):
     id: int
     user_id: int
-    name: str
-    final_amount: int
-    deadline: datetime
+    final_amount: int = Field(gt=0)
+    deadline: date | None
+    is_completed: bool
     created_at: datetime

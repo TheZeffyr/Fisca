@@ -1,0 +1,2 @@
+class SavingNotFoundError(Exception):
+    pass
