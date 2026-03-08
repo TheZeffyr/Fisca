@@ -1,6 +1,7 @@
+from datetime import datetime
+
 from app.models import Category
 from .base_repo import BaseRepository
-from sqlalchemy import select, or_
 from app.enums.transaction_type import TransactionType
 
 
@@ -21,7 +22,8 @@ class CategoryRepository(BaseRepository[Category]):
             self,
             user_id: int,
             name: str,
-            transaction_type: TransactionType
+            transaction_type: TransactionType,
+            created_at: datetime | None = None
         ) -> Category:
         """Create a new personal category for a user.
         
@@ -37,7 +39,8 @@ class CategoryRepository(BaseRepository[Category]):
         return await self._create(
             user_id=user_id,
             name=name,
-            transaction_type=transaction_type
+            transaction_type=transaction_type,
+            created_at=created_at
         )
     
     async def get_all(self) -> list[Category]:
@@ -47,6 +50,22 @@ class CategoryRepository(BaseRepository[Category]):
             list[Category]: List of all categories
         """
         return await self.get_all()
+    
+    async def get_by_name(self, name: str) -> Category | None:
+        """Get a category by its exact name (case-sensitive).
+    
+        This method searches for a category with the exact name match.
+        Note that category names are unique per user (if user_id is provided in filters)
+        or globally (if user_id is None).
+        
+        Args:
+            name: Exact category name to search for (case-sensitive)
+            
+        Returns:
+            Category | None: The found category, or None if no category with this name exists
+            
+        """
+        return await self._get_by(name=name)
     
     async def get_global(self) -> list[Category]:
         """Get all global categories (available to all users).
