@@ -159,7 +159,8 @@ class UserService:
         
         if user is None:
             raise UserNotFoundError()
-        
+        await self.session.commit()
+
         return UserDTO(
             id=user.id,
             tg_id=user.tg_id,
@@ -196,5 +197,6 @@ class UserService:
             raise UserNotFoundError()
         
         await self.repository.delete(user.id)
+        await self.session.commit()
         logger.info(f"User deleted successfully: \
                     id={user.id}, tg_id={user.tg_id}")
