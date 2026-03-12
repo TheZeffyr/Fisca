@@ -17,11 +17,12 @@ class BaseRepository(Generic[ModelType]):
 
     Provides common CRUD operations for SQLAlchemy models.
     All methods work within the current transaction - commit should be handled by the service layer.
-    
+
     Attributes:
         session: SQLAlchemy async session
         model: SQLAlchemy model class this repository operates on
     """
+
     OPERATORS = {
         "eq": lambda c, v: c == v,
         "ne": lambda c, v: c != v,
@@ -31,21 +32,22 @@ class BaseRepository(Generic[ModelType]):
         "lte": lambda c, v: c <= v,
         "like": lambda c, v: c.like(f"%{v}%"),
         "ilike": lambda c, v: c.ilike(f"%{v}%"),
-        "in": lambda c, v: c.in_(v)
+        "in": lambda c, v: c.in_(v),
     }
+
     def __init__(self, session: AsyncSession, model: Type[ModelType]):
         self.session = session
         self.model = model
 
     async def _create(self, **kwargs: Any) -> ModelType:
         """Create a new model instance and add to session (no commit).
-        
+
         Args:
             **kwargs: Field values for the new model
-            
+
         Returns:
             ModelType: Created model instance with refreshed data
-            
+
         Note:
             Does NOT commit transaction. Call session.commit() separately.
             Automatically refreshes the instance to get generated fields.
@@ -54,14 +56,14 @@ class BaseRepository(Generic[ModelType]):
         self.session.add(model)
         await self.session.flush()
         return model
-    
+
     async def _update(self, model: ModelType, **kwargs) -> ModelType:
         """Update an existing model instance (no commit).
-        
+
         Args:
             model: Model instance to update
             **kwargs: Fields to update
-            
+
         Returns:
             ModelType: Updated model instance
         """
@@ -73,22 +75,22 @@ class BaseRepository(Generic[ModelType]):
         await self.session.flush()
         await self.session.refresh(model)
         return model
-    
+
     async def _delete(self, model: ModelType) -> None:
         """Delete a model instance (no commit).
-        
+
         Args:
             model: Model instance to delete
         """
         await self.session.delete(model)
         await self.session.flush()
-    
+
     async def _get_by(self, **kwargs) -> ModelType | None:
         """Get a single record by arbitrary filters.
-        
+
         Args:
             **kwargs: Field filters
-            
+
         Returns:
             Optional[ModelType]: First matching record or None
         """
@@ -107,10 +109,10 @@ class BaseRepository(Generic[ModelType]):
         skip: int = 0,
         limit: int = 100,
         order_by: Optional[Union[str, list[str]]] = None,
-        **filters: Any
+        **filters: Any,
     ) -> list[ModelType]:
         """Get multiple records with filtering, pagination, and sorting.
-        
+
         Args:
             skip: Number of records to skip
             limit: Maximum number to return
@@ -119,7 +121,7 @@ class BaseRepository(Generic[ModelType]):
                        - Simple: field=value
                        - With operators: field__gt=100, field__in=[1,2,3]
                        - Special: field__between=[10,20], field__is_null=True
-        
+
         Returns:
             list[ModelType]: List of matching records (always list)
         """
@@ -147,7 +149,9 @@ class BaseRepository(Generic[ModelType]):
                     continue
 
                 if operator == "is_null":
-                    query = query.where(column.is_(None) if value else column.is_not(None))
+                    query = query.where(
+                        column.is_(None) if value else column.is_not(None)
+                    )
                     continue
 
                 if operator in self.OPERATORS:
@@ -156,7 +160,6 @@ class BaseRepository(Generic[ModelType]):
             else:
                 if key in columns:
                     query = query.where(getattr(self.model, key) == value)
-
 
         if order_by:
 
@@ -175,18 +178,17 @@ class BaseRepository(Generic[ModelType]):
 
                 query = query.order_by(desc(column) if desc_order else column)
 
-
         query = query.offset(skip).limit(limit)
 
         result = await self.session.execute(query)
         return list(result.scalars())
-    
+
     async def get_by_id(self, id: int) -> ModelType | None:
         """Get a record by its primary key.
-        
+
         Args:
             id: Primary key value
-            
+
         Returns:
             ModelType|None: Record if found, None otherwise
         """
@@ -196,26 +198,26 @@ class BaseRepository(Generic[ModelType]):
 
     async def get_all(self, skip: int = 0, limit: int = 100) -> list[ModelType]:
         """Get all records with pagination.
-        
+
         Args:
             skip: Number of records to skip (default: 0)
             limit: Maximum number to return (default: 100)
-            
+
         Returns:
             List[ModelType]: List of records
         """
         return await self._get_many(skip=skip, limit=limit)
-    
+
     async def exists(self, **kwargs) -> bool:
         """Check if any record exists with given filters.
-        
+
         Args:
             **kwargs: Field filters
-            
+
         Returns:
             bool: True if at least one record exists, False otherwise
         """
-        
+
         query = select(self.model.id).filter_by(**kwargs).limit(1)
         result = await self.session.execute(query)
         return result.scalar() is not None

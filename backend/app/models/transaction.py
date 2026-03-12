@@ -28,14 +28,12 @@ class Transaction(BaseModel):
         date (date): Transaction date.
         transaction_type (TransactionType): Type: income (money in), expense (money out).
     """
+
     __table_args__ = (
-        CheckConstraint(
-            "amount > 0",
-            name="check_amount_positive"
-        ),
+        CheckConstraint("amount > 0", name="check_amount_positive"),
         CheckConstraint(
             "transaction_type IN ('income', 'expense')",
-            name="check_transaction_type_valid"
+            name="check_transaction_type_valid",
         ),
         CheckConstraint(
             """
@@ -43,42 +41,33 @@ class Transaction(BaseModel):
             OR
             (saving_id IS NOT NULL AND category_id IS NULL)
             """,
-            name="check_category_saving_consistency"
+            name="check_category_saving_consistency",
         ),
-        Index('idx_transactions_user_date', 'user_id', 'date'),
-        Index('idx_transactions_type', 'transaction_type'),
-        Index('idx_transactions_saving', 'saving_id'),
-        Index('idx_transactions_category', 'category_id'),
+        Index("idx_transactions_user_date", "user_id", "date"),
+        Index("idx_transactions_type", "transaction_type"),
+        Index("idx_transactions_saving", "saving_id"),
+        Index("idx_transactions_category", "category_id"),
     )
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"),
-        doc="ID of the transaction owner."
+        ForeignKey("users.id", ondelete="CASCADE"), doc="ID of the transaction owner."
     )
     category_id: Mapped[int | None] = mapped_column(
         ForeignKey("categories.id", ondelete="SET NULL"),
         nullable=True,
-        doc="ID of the transaction category."
+        doc="ID of the transaction category.",
     )
     saving_id: Mapped[int | None] = mapped_column(
         ForeignKey("savings.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        doc="ID of the associated saving goal. For expense transactions - source saving. For income transactions - target saving."
+        doc="ID of the associated saving goal. For expense transactions - source saving. For income transactions - target saving.",
     )
-    amount: Mapped[int] = mapped_column(
-        Integer,
-        doc="Transaction size."
-    )
-    
-    date: Mapped[date_type] = mapped_column(
-        Date,
-        index=True,
-        doc="Transaction date."
-    )
-    
+    amount: Mapped[int] = mapped_column(Integer, doc="Transaction size.")
+
+    date: Mapped[date_type] = mapped_column(Date, index=True, doc="Transaction date.")
+
     transaction_type: Mapped[TransactionType] = mapped_column(
-        Enum(TransactionType),
-        doc="Type: income (money in), expense (money out)."
+        Enum(TransactionType), doc="Type: income (money in), expense (money out)."
     )
 
     user: Mapped["User"] = relationship(back_populates="transactions")

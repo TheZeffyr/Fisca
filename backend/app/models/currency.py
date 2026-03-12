@@ -20,20 +20,18 @@ class Currency(BaseModel):
         name (str): Full name of the currency
         symbol (str, 1 char): Currency symbol (₽, $, €, etc.)
     """
+
     currency_code: Mapped[str] = mapped_column(
         CHAR(3),
         unique=True,
         index=True,
-        doc="Three-letter currency code according to ISO 4217"
+        doc="Three-letter currency code according to ISO 4217",
     )
-    name: Mapped[str] = mapped_column(
-        String(50),
-        doc="Full name of the currency"
-    )
+    name: Mapped[str] = mapped_column(String(50), doc="Full name of the currency")
     symbol: Mapped[str] = mapped_column(
         CHAR(1),
         nullable=True,
-        doc="Currency symbol. For currencies without a symbol, an empty string."
+        doc="Currency symbol. For currencies without a symbol, an empty string.",
     )
-    
+
     users: Mapped[list["User"]] = relationship(back_populates="currency")

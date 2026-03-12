@@ -23,7 +23,7 @@ class SavingRepository(BaseRepository[Saving]):
         name: str,
         final_amount: int,
         deadline: date | None = None,
-        created_at: datetime | None = None
+        created_at: datetime | None = None,
     ) -> Saving:
         """Create a new savings goal.
 
@@ -42,7 +42,7 @@ class SavingRepository(BaseRepository[Saving]):
             name=name,
             final_amount=final_amount,
             deadline=deadline,
-            created_at=created_at
+            created_at=created_at,
         )
 
     async def get_by_user_id(self, user_id: int) -> list[Saving]:
@@ -60,10 +60,7 @@ class SavingRepository(BaseRepository[Saving]):
         return await self._get_many(user_id=user_id)
 
     async def get_active(
-        self,
-        user_id: int,
-        skip: int = 0,
-        limit: int = 100
+        self, user_id: int, skip: int = 0, limit: int = 100
     ) -> list[Saving]:
         """Get active (not completed) savings goals for a user.
 
@@ -84,7 +81,7 @@ class SavingRepository(BaseRepository[Saving]):
             is_completed=False,
             order_by="deadline",
             skip=skip,
-            limit=limit
+            limit=limit,
         )
 
     async def update(
@@ -93,7 +90,7 @@ class SavingRepository(BaseRepository[Saving]):
         name: str | None = None,
         final_amount: int | None = None,
         deadline: date | None = None,
-        is_completed: bool | None = None
+        is_completed: bool | None = None,
     ) -> Saving | None:
         """Update savings goal details.
 

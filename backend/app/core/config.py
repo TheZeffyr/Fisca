@@ -3,7 +3,6 @@ import logging
 
 from dotenv import load_dotenv
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -17,8 +16,8 @@ class Config:
             logger.error(f"Required environment variable {var_name} is not set")
             raise ValueError(f"Required environment variable {var_name} is not set")
         return value.strip()
-    
+
     load_dotenv()
-    
+
     DB_URL = _get_required("DB_URL")
-    DEBUG = _get_required("DEBUG")    
+    DEBUG = _get_required("DEBUG")

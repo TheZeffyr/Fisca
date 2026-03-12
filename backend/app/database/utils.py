@@ -7,6 +7,7 @@ from .session import engine
 
 logger = logging.getLogger(__name__)
 
+
 async def create_all_tables(engine: AsyncEngine = engine):
     async with engine.begin() as conn:
         logger.info("Create all tables")

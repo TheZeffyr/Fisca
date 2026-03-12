@@ -7,20 +7,18 @@ from app.models import User
 class UserRepository(BaseRepository[User]):
     """
     Repository for User model operations.
-    
+
     Inherits common CRUD operations from BaseRepository.
 
     Attributes:
         session: SQLAlchemy async session
     """
+
     def __init__(self, session):
         super().__init__(session, User)
-    
+
     async def create(
-        self,
-        tg_id: int,
-        currency_id: int,
-        created_at: datetime | None = None
+        self, tg_id: int, currency_id: int, created_at: datetime | None = None
     ) -> User:
         """
         Create a new user with Telegram ID.
@@ -33,26 +31,24 @@ class UserRepository(BaseRepository[User]):
             User: Created User instance
         """
         return await super()._create(
-            tg_id=tg_id,
-            currency_id=currency_id,
-            created_at=created_at
+            tg_id=tg_id, currency_id=currency_id, created_at=created_at
         )
-    
+
     async def get_by_tg_id(self, tg_id: int) -> User | None:
         """
         Retrieve user by Telegram ID.
-        
+
         Args:
             tg_id: Telegram user ID to search for
-        
+
         Returns:
             User | None: User instance if found, None otherwise
         """
         return await self._get_by(tg_id=tg_id)
-    
-    async def update_currency(self, user_id: int, currency_id: int) -> User |None:
+
+    async def update_currency(self, user_id: int, currency_id: int) -> User | None:
         """Update user's default currency.
-    
+
         Args:
             user_id: ID of the user to update
             currency_id: New currency ID
@@ -67,19 +63,18 @@ class UserRepository(BaseRepository[User]):
 
     async def delete(self, user_id: int) -> bool:
         """Delete a user by ID.
-        
+
         This is a HARD DELETE - removes user permanently.
 
         Args:
             user_id: ID of the user to delete
-            
+
         Returns:
             bool: True if deleted, False if not found
         """
         user = await self.get_by_id(user_id)
         if not user:
             return False
-        
+
         await self._delete(user)
         return True
-    

@@ -9,7 +9,7 @@ routers = [
     currency_router,
     transaction_router,
     category_router,
-    saving_router
+    saving_router,
 ]
 
 

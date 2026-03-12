@@ -5,7 +5,7 @@ from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
 
-from app.utils.pluralize import pluralize
+from app.utils import strings
 
 
 class BaseModel(AsyncAttrs, DeclarativeBase):
@@ -16,7 +16,7 @@ class BaseModel(AsyncAttrs, DeclarativeBase):
         - Primary key 'id' for all models
         - 'created_at' timestamp with database default
         - Async support via SQLAlchemy's AsyncAttrs
-    
+
     All model classes should inherit from this BaseModel to maintain consistency across the application.
 
     Attributes:
@@ -31,7 +31,7 @@ class BaseModel(AsyncAttrs, DeclarativeBase):
         """
         Automatically generates a table name based on the class name.
 
-        Converts CamelCase class name to snake_case and applies English 
+        Converts CamelCase class name to snake_case and applies English
         pluralization rules (handles exceptions like person → people).
 
         Returns:
@@ -39,16 +39,18 @@ class BaseModel(AsyncAttrs, DeclarativeBase):
         """
         name = cls.__name__
 
-        name = re.sub(r'([A-Z]+)([A-Z][a-z])', r'\1_\2', name)
-        name = re.sub(r'([a-z\d])([A-Z])', r'\1_\2', name)
+        name = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", name)
+        name = re.sub(r"([a-z\d])([A-Z])", r"\1_\2", name)
         name = name.lower()
 
-        return pluralize(name)
-    
+        return strings.pluralize(name)
+
     def __repr__(self) -> str:
-        pk = f"id={self.id}" if hasattr(self,"id") else "no id"
+        pk = f"id={self.id}" if hasattr(self, "id") else "no id"
         return f"<{self.__class__.__name__}({pk})>"
 
-
     id: Mapped[int] = mapped_column(primary_key=True)
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        server_default=func.now(),
+        index=True
+    )

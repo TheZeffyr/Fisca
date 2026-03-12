@@ -9,5 +9,5 @@ __all__ = [
     "CurrencyRepository",
     "TransactionRepository",
     "CategoryRepository",
-    "SavingRepository"
+    "SavingRepository",
 ]
