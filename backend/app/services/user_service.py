@@ -60,12 +60,12 @@ class UserService:
             ... )
             >>> print(f"User registered: {user.id}")
         """
-        existing = await self.repository.get_by_tg_id(tg_id)
+        existing = await self.repository.get_by_tg_id(tg_id)#TODO: переписать на existing
         if existing:
             logger.warning(
                 f"Attempt to register already existing user with tg_id {tg_id}"
             )
-            raise UserAlreadyExistsError(f"User with tg_id {tg_id} already exists")
+            raise UserAlreadyExistsError(tg_id=tg_id)
 
         user = await self.repository.create(
             tg_id=tg_id, currency_id=currency_id, created_at=created_at
@@ -75,7 +75,7 @@ class UserService:
             id={user.id}, tg_id={user.tg_id}, currency_id={user.currency_id}")
         return UserDTO.model_validate(user)
 
-    async def get_by_tg_id(self, tg_id: int) -> UserDTO:
+    async def get_user_by_tg_id(self, tg_id: int) -> UserDTO:
         """Get user by Telegram ID.
 
         Args:
@@ -97,18 +97,23 @@ class UserService:
         user = await self.repository.get_by_tg_id(tg_id)
 
         if user is None:
-            raise UserNotFoundError()
+            raise UserNotFoundError(tg_id=tg_id)
 
         return UserDTO.model_validate(user)
+    
+    async def get_user(self, user_id: int) -> UserDTO:
+        user = await self.repository.get_by_id(user_id)
+        if user is None:
+            raise UserNotFoundError(user_id=user_id)
 
-    async def update_currency(self, tg_id: int, currency_id: int) -> UserDTO:
-        """Update user's preferred currency.
+        return UserDTO.model_validate(user)
+    
+    async def update_user(self, user_id: int, currency_id: int) -> UserDTO:
+        """update_user user's fields.
 
-        This method changes the default currency for a user.
-        It validates that the new currency exists before updating.
 
         Args:
-            tg_id: Telegram user ID
+            user_id: user ID
             currency_id: New currency ID
 
         Returns:
@@ -128,11 +133,11 @@ class UserService:
             ... except CurrencyNotFoundError:
             ...     print("Currency not found")
         """
-        user = await self.get_by_tg_id(tg_id)
+        user = await self.get_user(user_id)
         currency_exists = await self.currency_repository.exists(currency_id=currency_id)
 
         if not currency_exists:
-            raise CurrencyNotFoundError()
+            raise CurrencyNotFoundError(currency_id)
 
         user = await self.repository.update_currency(
             user_id=user.id, currency_id=currency_id
@@ -144,7 +149,7 @@ class UserService:
 
         return UserDTO.model_validate(user)
 
-    async def delete(self, tg_id: int) -> None:
+    async def delete_user(self, user_id: int) -> None:
         """Delete a user account permanently.
 
         This method removes the user and all associated data
@@ -167,7 +172,7 @@ class UserService:
             This operation is irreversible! All user data will be lost.
             Consider soft delete (deactivate) instead if you need to keep data.
         """
-        user = await self.get_by_tg_id(tg_id)
+        user = await self.get_user(user_id)
 
         if not user:
             raise UserNotFoundError()
