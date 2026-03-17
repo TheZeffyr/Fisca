@@ -17,6 +17,9 @@ def main():
         logger.critical(f"Error configuration: {e}")
         raise SystemExit(1)
     
+    if config.LOG_LEVEL!=10:
+        setup_logging(config.LOG_LEVEL)
+    
     
 
 if __name__ == "__main__":
