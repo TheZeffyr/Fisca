@@ -5,7 +5,6 @@ from sqlalchemy import (
     String,
     ForeignKey,
     Enum,
-    UniqueConstraint,
     CheckConstraint
 )
 
@@ -48,10 +47,6 @@ class Category(BaseModel):
     )
 
     __table_args__ = (
-        UniqueConstraint(
-            "user_id", "name", "transaction_type", 
-            name="uq_user_category_name_type"
-        ),
         CheckConstraint(
             "LENGTH(TRIM(name)) > 0", 
             name="check_category_name_not_empty"
