@@ -41,5 +41,5 @@ class Config:
        return self._get_required("DB_URL")
         
     @property
-    def DEBUG(self):
-        return self._str_to_bool(self._get_required("DEBUG"))
+    def LOG_LEVEL(self):
+        return int(self._get_required("LOG_LEVEL"))
