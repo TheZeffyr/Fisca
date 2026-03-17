@@ -1,10 +1,10 @@
 import logging
 
-from app.core.logger import setup_logging, get_logger
-from app.core.config import Config
-
 from dotenv import load_dotenv
 
+from app.core.config import Config
+from app.core.database import Database
+from app.core.logger import setup_logging, get_logger
 
 def main():
     setup_logging(logging.DEBUG)
@@ -19,6 +19,9 @@ def main():
     
     if config.LOG_LEVEL!=10:
         setup_logging(config.LOG_LEVEL)
+    
+    db = Database(config.DB_URL)
+    logger.info("The database is initialized")
     
     
 
