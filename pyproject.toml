@@ -4,4 +4,6 @@ version = "0.1.0-dev"
 description = "Fisca API - smart personal finance manager with moneybox and analytics"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "dotenv>=0.9.9",
+]
