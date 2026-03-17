@@ -24,6 +24,10 @@ class Config:
             )
         return value.strip()
 
-
-    DB_URL = _get_required("DB_URL")
-    DEBUG = _get_required("DEBUG")
+    @property
+    def DB_URL(self):
+       return self._get_required("DB_URL")
+        
+    @property
+    def DEBUG(self):
+        return bool(self._get_required("DEBUG"))
