@@ -1,7 +1,5 @@
 import os
 
-from dotenv import load_dotenv
-
 
 class Config:
     """Configuration manager for the application."""
@@ -26,7 +24,6 @@ class Config:
             )
         return value.strip()
 
-    load_dotenv()
 
     DB_URL = _get_required("DB_URL")
     DEBUG = _get_required("DEBUG")
