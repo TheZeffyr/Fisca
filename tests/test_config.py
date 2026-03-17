@@ -11,18 +11,16 @@ def test_config_reads_env(monkeypatch):
 	config = Config()
 	
 	assert config.DB_URL == "sqlite:///test.db"
-	assert config.DB_URL is True
+	assert config.DEBUG is True
 
 def test_config_missing_env(monkeypatch):
 	monkeypatch.delenv("DB_URL", raising=False)
-	monkeypatch.delenv("DEBUG", raising=False)
 
 	with pytest.raises(ValueError):
-		Config()
+		Config().DB_URL
 
 def test_debug_parsing(monkeypatch):
-	monkeypatch.setenv("DB_URL", "sqlite:///test.db")
-	monkeypatch.setenv("DEBUG", "true")
+	monkeypatch.setenv("DEBUG", "False")
 
 	config = Config()
-	assert config.DB_URL is False
+	assert config.DEBUG is False
