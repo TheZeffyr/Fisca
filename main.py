@@ -5,6 +5,7 @@ from app.core.config import Config
 
 from dotenv import load_dotenv
 
+
 def main():
     setup_logging(logging.DEBUG)
     logger = get_logger(__name__)
@@ -16,9 +17,6 @@ def main():
         logger.critical(f"Error configuration: {e}")
         raise SystemExit(1)
     
-    setup_logging(
-        int(config.DEBUG)
-    )
     
 
 if __name__ == "__main__":

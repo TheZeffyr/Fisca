@@ -1,8 +1,7 @@
-import os
-
 import pytest
 
 from app.core.config import Config
+
 
 def test_config_reads_env(monkeypatch):
 	monkeypatch.setenv("DB_URL", "sqlite:///test.db")
