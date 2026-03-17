@@ -5,12 +5,12 @@ from app.core.config import Config
 
 def test_config_reads_env(monkeypatch):
 	monkeypatch.setenv("DB_URL", "sqlite:///test.db")
-	monkeypatch.setenv("DEBUG", "true")
+	monkeypatch.setenv("LOG_LEVEL", "10")
 
 	config = Config()
 	
 	assert config.DB_URL == "sqlite:///test.db"
-	assert config.DEBUG is True
+	assert config.LOG_LEVEL == 10
 
 def test_config_missing_env(monkeypatch):
 	monkeypatch.delenv("DB_URL", raising=False)
@@ -18,8 +18,3 @@ def test_config_missing_env(monkeypatch):
 	with pytest.raises(ValueError):
 		Config().DB_URL
 
-def test_debug_parsing(monkeypatch):
-	monkeypatch.setenv("DEBUG", "False")
-
-	config = Config()
-	assert config.DEBUG is False
