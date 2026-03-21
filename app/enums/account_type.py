@@ -11,4 +11,4 @@ class AccountType(StrEnum):
     
     CASH = "cash"
     CARD = "card"
-    PIGGY_BANK = "piggy_bank"
+    SAVINGS = "savings"

@@ -5,7 +5,8 @@ from sqlalchemy import (
     String,
     ForeignKey,
     Enum,
-    CheckConstraint
+    CheckConstraint,
+    UniqueConstraint
 )
 
 from app.enums import TransactionType
@@ -16,29 +17,22 @@ if TYPE_CHECKING:
 
 
 class Category(BaseModel):
-    """A category model for classifying transactions.
-
-    Allows users to group transactions by type of expenses/income.
-
-    Attributes:
-        user_id (int | None): ID of the category owner. NULL means global category.
-        name (str): Category name
-        transaction_type (CategoryType): Operation type used category
+    """
     """
 
     user_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id"),
+        ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        doc="ID of the category owner. NULL means global category."
+        doc=""
     )
     name: Mapped[str] = mapped_column(
         String(100),
-        doc="Category name"
+        doc=""
     )
     transaction_type: Mapped[TransactionType] = mapped_column(
         Enum(TransactionType),
-        doc="Operation type used category"
+        doc=""
     )
 
     user: Mapped["User"] = relationship(back_populates="categories")
@@ -48,7 +42,11 @@ class Category(BaseModel):
 
     __table_args__ = (
         CheckConstraint(
-            "LENGTH(TRIM(name)) > 0", 
+            "length(trim(name)) > 0",
             name="check_category_name_not_empty"
+        ),
+        UniqueConstraint(
+            "user_id", "name",
+            name="uq_user_category_name"
         )
     )

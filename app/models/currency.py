@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import CHAR, String
+from sqlalchemy import CHAR, String, CheckConstraint
 
 from app.models import BaseModel
 
@@ -10,30 +10,36 @@ if TYPE_CHECKING:
 
 
 class Currency(BaseModel):
-    """The currency model for financial transactions
-
-    Stores information about supported currencies using the ISO 4217 standard.
-
-    Attributes:
-        code (str, 3 chars): Three-letter currency code according to ISO 4217.
-        name (str): Full name of the currency.
-        symbol (str, 1 char): Currency symbol. For currencies without a symbol, an empty string.
+    """
     """
 
     code: Mapped[str] = mapped_column(
         CHAR(3),
         unique=True,
-        doc="Three-letter currency code according to ISO 4217"
+        doc=""
     )
     name: Mapped[str] = mapped_column(
         String(50),
-        doc="Full name of the currency"
+        doc=""
     )
     symbol: Mapped[str] = mapped_column(
         CHAR(1),
-        nullable=True,
-        doc="Currency symbol. " \
-        "For currencies without a symbol, an empty string."
+        doc=""
     )
 
     users: Mapped[list["User"]] = relationship(back_populates="currency")
+    
+    __table_args__ = (
+        CheckConstraint(
+            "length(trim(code)) > 0",
+            name="check_currency_code_not_empty"
+        ),
+        CheckConstraint(
+            "length(trim(name)) > 0",
+            name="check_currency_name_not_empty"
+        ),
+        CheckConstraint(
+            "length(trim(symbol)) > 0",
+            name="check_currency_symbol_not_empty"
+        )
+    )
