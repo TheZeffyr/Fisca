@@ -1,7 +1,7 @@
 from datetime import date, datetime
+from decimal import Decimal
 
 from app.models import Transaction
-from app.enums import TransactionType
 from app.repositories import BaseRepository
 
 
@@ -18,7 +18,7 @@ class TransactionRepository(BaseRepository[Transaction]):
     async def create(
         self,
         user_id: int,
-        amount: int,
+        amount: Decimal,
         date: date,
         note: str | None,
         from_account_id: int | None,
@@ -169,7 +169,7 @@ class TransactionRepository(BaseRepository[Transaction]):
         from_account_id: int | None = None,
         to_account_id: int | None = None,
         note: str | None = None,
-        amount: int | None = None,
+        amount: Decimal | None = None,
         date: date | None = None,
     ) -> Transaction | None:
         """Update an existing transaction.
