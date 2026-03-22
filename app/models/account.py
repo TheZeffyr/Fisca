@@ -2,54 +2,91 @@ from typing import TYPE_CHECKING
 from decimal import Decimal
 from datetime import date
 
-
-
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Numeric, Date, ForeignKey, CheckConstraint, Enum, select, func, cast
+from sqlalchemy import (
+	String,
+	Numeric,
+	Date,
+	ForeignKey,
+	CheckConstraint,
+	Enum,
+	select,
+	func,
+	cast
+)
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from app.models import BaseModel
 from app.enums import AccountType
-
 
 if TYPE_CHECKING:
     from app.models import User, Transaction
 
 
 class Account(BaseModel):
+    """The user’s financial account.
+    
+    Supports three types of accounts:
+    - CASH: Cash (simple account, no purpose)
+    - CARD: bank card (simple account, no purpose)
+    - SAVINGS: Savings account (with target amount and end date)
+    
+    Contains the cached balance and calculated balance
+    transaction-based. Cache balance is updated when transactions are created
+    for quick queries, the calculated one is used for matching.
+    
+    Attributes:
+        name (str): The name of the account.
+        type (AccountType): Account type.
+
+        target_amount (Decimal | None): A target amount for the accrual account.The required field for SAVINGS must be > 0. For CASH and CARD always NULL.
+
+        end_date (date | None): End date for the accrual account. For CASH and CARD always NULL.
+
+        is_completed (bool): The goal achievement flag for the accrual account.
+        user_id (int): Account owner user ID.
+
+        balance (Decimal): Cached current account balance. Updated with each transaction.
+
+        incomes (list[Transaction]): A list of account income transactions.
+        expenses (list[Transaction]): A list of account expense transactions.
+
+        user (User): Account owner
+        calc_balance (Decimal): Calculated account balance based on transactions. Used to reconcile with cached balance. Can be used in both Python and SQL queries.
+    """
     name: Mapped[str] = mapped_column(
         String(100),
-        doc=""
+        doc="The name of the account."
     )
     type: Mapped[AccountType] = mapped_column(
         Enum(AccountType),
-        doc=""
+        doc="Account type."
 	)
     target_amount: Mapped[Decimal | None] = mapped_column(
         Numeric(10,2),
         nullable=True,
-        doc=""
+        doc="A target amount for the accrual account."
 	)
     
     end_date: Mapped[date | None] = mapped_column(
         Date,
         nullable=True,
-        doc=""
+        doc="End date for the accrual account."
     )
     is_completed: Mapped[bool | None] = mapped_column(
         default=False,
         nullable=True,
-        doc=""
+        doc="The goal achievement flag for the accrual account."
     )
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
         index=True,
-        doc=""
+        doc="Account owner user ID"
     )
     balance: Mapped[Decimal] = mapped_column(
         Numeric(10,2),
         default=0,
-        doc=""
+        doc="Cached current account balance."
     )
     @hybrid_property
     def calc_balance(self) -> Decimal:#type: ignore

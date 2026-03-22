@@ -10,21 +10,31 @@ if TYPE_CHECKING:
 
 
 class Currency(BaseModel):
-    """
+    """Currency for financial transactions.
+    
+    Stores information about the currencies available in the system (for example, RUB, USD, EUR).
+    Used to display amounts in accounts and transactions in the user’s currency.
+    
+    Attributes:
+        code (str): The three-letter currency code according to ISO 4217 (RUB, USD, EUR).
+        name (str): Full name of the currency in Russian.
+        symbol (str): The currency symbol (₽, $, €).
+        users (list[User]): A list of users using this currency.
     """
 
     code: Mapped[str] = mapped_column(
         CHAR(3),
         unique=True,
-        doc=""
+        doc="The three-letter currency code according\
+        to ISO 4217 (RUB, USD, EUR)."
     )
     name: Mapped[str] = mapped_column(
         String(50),
-        doc=""
+        doc="Full name of the currency in Russian."
     )
     symbol: Mapped[str] = mapped_column(
         CHAR(1),
-        doc=""
+        doc="The currency symbol (₽, $, €)."
     )
 
     users: Mapped[list["User"]] = relationship(back_populates="currency")

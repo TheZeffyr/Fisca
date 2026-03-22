@@ -17,22 +17,35 @@ if TYPE_CHECKING:
 
 
 class Category(BaseModel):
-    """
+    """Category to classify transactions.
+    
+    Allows you to group transactions by types (revenue/expense) and themes.
+    Categories can be as personal (belong to a particular user),
+    also general (user_id = NULL), accessible to all users.
+    
+    Attributes:
+        user_id (int | None): Category owner user ID. If NULL - the category is shared by all users.
+        name (str): Category name.
+        transaction_type (TransactionType): Category transaction type.Determines which transactions fall into this category.
+        user (User | None): A connection to the owner user. If category is general, value None.
+        transactions (list[Transaction]): A list of transactions that are categorized.
     """
 
     user_id: Mapped[int | None] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
-        doc=""
+        doc="Category owner user ID.\
+        If NULL - the category is shared by all users."
     )
     name: Mapped[str] = mapped_column(
         String(100),
-        doc=""
+        doc="Category name."
     )
     transaction_type: Mapped[TransactionType] = mapped_column(
         Enum(TransactionType),
-        doc=""
+        doc="Category transaction type. \
+        Determines which transactions fall into this category."
     )
 
     user: Mapped["User"] = relationship(back_populates="categories")

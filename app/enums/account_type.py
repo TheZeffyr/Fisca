@@ -6,7 +6,7 @@ class AccountType(StrEnum):
     
     Cash: Cash (wallet)
     Card: Bank cards (debit/credit)
-    PiggyBank: Purpose-built piggybacks
+    savings: Purpose-built savings
     """
     
     CASH = "cash"
