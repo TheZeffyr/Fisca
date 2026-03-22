@@ -44,7 +44,11 @@ class CategoryRepository(BaseRepository[Category]):
             created_at=created_at
         )
 
-    async def get_global(self) -> list[Category]:
+    async def get_global(
+        self,
+        skip: int = 0,
+        limit: int = 100
+    ) -> list[Category]:
         """Get all global categories (available to all users).
 
         Global categories have user_id = NULL and serve as defaults
@@ -53,9 +57,18 @@ class CategoryRepository(BaseRepository[Category]):
         Returns:
             list[Category]: List of global categories
         """
-        return await self._get_many(user_id=None)
+        return await self._get_many(
+            user_id=None,
+            skip=skip,
+            limit=limit
+        )
 
-    async def get_by_user(self, user_id: int) -> list[Category]:
+    async def get_by_user(
+        self,
+        user_id: int,
+        skip: int = 0,
+        limit: int = 100
+    ) -> list[Category]:
         """Get personal categories created by a specific user.
 
         Args:
@@ -64,9 +77,18 @@ class CategoryRepository(BaseRepository[Category]):
         Returns:
             list[Category]: List of user's personal categories
         """
-        return await self._get_many(user_id=user_id)
+        return await self._get_many(
+            user_id=user_id,
+            skip=skip,
+            limit=limit
+        )
 
-    async def get_available_for_user(self, user_id: int) -> list[Category]:
+    async def get_available_for_user(
+        self,
+        user_id: int,
+        skip: int = 0,
+        limit: int = 100
+    ) -> list[Category]:
         """Get all categories available to a specific user.
 
         This includes:
@@ -83,8 +105,16 @@ class CategoryRepository(BaseRepository[Category]):
             list[Category]: Combined list of personal and global categories,
                           sorted by transaction type and name
         """
-        personal_categories = await self._get_many(user_id=user_id)
-        global_categories = await self._get_many(user_id=None)
+        personal_categories = await self._get_many(
+            user_id=user_id,
+            skip=skip,
+            limit=limit
+        )
+        global_categories = await self._get_many(
+            user_id=None,
+            skip=skip,
+            limit=limit
+        )
         return personal_categories + global_categories
 
     async def get_by_user_and_type(
